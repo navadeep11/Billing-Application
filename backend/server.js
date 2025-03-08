@@ -1,6 +1,7 @@
 const express = require("express");
 require('dotenv').config();
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const dbConnect = require("./Config/DbConnect");
 const cors = require("cors");
 const Router = require("./Routes/Routers");
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json({ limit: '10mb' }));  // Adjust size as needed
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(cookieParser());
 
 
 // CORS Configuration
@@ -24,6 +26,7 @@ const corsOptions = {
     origin: 'http://localhost:3000', 
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
 };
   
 app.use(cors(corsOptions));
