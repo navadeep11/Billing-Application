@@ -134,7 +134,6 @@ exports.signin = async (req, res) => {
 
     // Set HTTP-Only Cookie
     res.cookie('token', token, {
-      httpOnly: true,
       secure: true,  // Use secure: true in production (HTTPS)
       sameSite: 'None',  // Cross-Origin Request allowed
       maxAge: 2 * 60 * 60 * 1000
