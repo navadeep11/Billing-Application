@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const OtpLogic = () => {
   const [otp, setOtp] = useState("");
-  //const { email } = useParams();
+  const { email } = useParams();
+  const navigate=useNavigate();
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [timer, setTimer] = useState(60);
   const [errorMessage, setErrorMessage] = useState("");
@@ -35,7 +36,7 @@ const OtpLogic = () => {
   const handleVerifyOtp = () => {
     if (otp === "1234") {
       setSuccessMessage("OTP Verified Successfully!");
-      //setTimeout(() => navigate("/signIn"), 2000);
+      setTimeout(() => navigate("/signIn"), 2000);
     } else {
       setErrorMessage("Invalid OTP. Please try again.");
     }
@@ -43,7 +44,7 @@ const OtpLogic = () => {
 
   return {
     otp,
-    //email,
+    email,
     isResendDisabled,
     timer,
     errorMessage,

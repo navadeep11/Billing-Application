@@ -11,8 +11,11 @@ import {
 import { AccountCircle, Email, Lock, Login } from "@mui/icons-material"; 
 import { ValidationSchema } from "../Logics/SignInLogic.js";
 import "../Css/SignIn.css"
+import { useSignInMutation } from "../../../App/Services/AuthenticationApi.js";
 
 const SignIn = () => {
+  const [signIn, { isLoading, error }] = useSignInMutation(); // Mutation hook
+
   return (
     <div className="signin-wrapper">
       <Card className="signin-card">
@@ -30,10 +33,16 @@ const SignIn = () => {
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={ValidationSchema}
-            onSubmit={(values, { resetForm }) => {
-              console.log("Login Data", values);
-              alert("Sign In Successful!");
-              resetForm();
+            onSubmit={async (values, { resetForm }) => {
+              try {
+                const response = await signIn(values).unwrap();
+                console.log("Login Successful:", response);
+                alert("Sign In Successful!");
+                resetForm();
+              } catch (err) {
+                console.error("Login Failed:", err);
+                alert("Login Failed. Please check your credentials.");
+              }
             }}
           >
             {({ errors, touched, handleChange }) => (
@@ -75,16 +84,22 @@ const SignIn = () => {
                   }}
                 />
                 <div className="signin-button">
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  startIcon={<Login />} 
-                >
-                  Sign In
-                </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    startIcon={<Login />}
+                    disabled={isLoading} // Disable while loading
+                  >
+                    {isLoading ? "Signing In..." : "Sign In"}
+                  </Button>
                 </div>
+                {error && (
+                  <Typography color="error" align="center">
+                    {error?.data?.message || "Login failed. Try again!"}
+                  </Typography>
+                )}
               </Form>
             )}
           </Formik>
