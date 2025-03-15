@@ -1,12 +1,24 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Button, IconButton, Typography, Drawer, List, ListItem, ListItemText, Box, useMediaQuery } from "@mui/material";
-import { Home, PlusSquare, BarChart, ShoppingCart, LogOut, Menu } from "lucide-react";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  useMediaQuery,
+} from "@mui/material";
+import { Home, PlusSquare, BarChart, ShoppingCart, LogOut, LogIn, UserPlus, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useNavbarLogic } from "./NavbarLogic";
+import { useNavbarLogic } from "./NavbarLogic"; 
 import "./Navbar.css";
 
 const Navbar = () => {
-  const { isAuthenticated, handleLogout } = useNavbarLogic();
+  const { isAuthenticated, handleLogout } = useNavbarLogic(); // Check if user is authenticated
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -37,32 +49,55 @@ const Navbar = () => {
 
         {!isMobile && (
           <Box className="nav-links">
-            {menuItems.map(({ to, label, icon }) => (
-              <Link to={to} key={label} className="nav-btn">
-                <IconButton color="inherit">{icon}</IconButton>
-                {label}
-              </Link>
-            ))}
+            {isAuthenticated &&
+              menuItems.map(({ to, label, icon }) => (
+                <Link to={to} key={label} className="nav-btn">
+                  <IconButton color="inherit">{icon}</IconButton>
+                  {label}
+                </Link>
+              ))}
           </Box>
         )}
 
         <Box className="auth-buttons">
-          
+          {isAuthenticated ? (
             <Button color="inherit" onClick={handleLogout} startIcon={<LogOut size={20} />}>
               Logout
             </Button>
-          
+          ) : (
+            <>
+              <Button color="inherit" component={Link} to="/signin" startIcon={<LogIn size={20} />}>
+                Sign In
+              </Button>
+              <Button color="inherit" component={Link} to="/signup" startIcon={<UserPlus size={20} />}>
+                Sign Up
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
 
       <Drawer anchor="left" open={mobileOpen} onClose={handleDrawerToggle}>
         <List className="mobile-menu">
-          {menuItems.map(({ to, label, icon }) => (
-            <ListItem button key={label} component={Link} to={to} onClick={handleDrawerToggle}>
-              {icon}
-              <ListItemText primary={label} />
-            </ListItem>
-          ))}
+          {isAuthenticated ? (
+            menuItems.map(({ to, label, icon }) => (
+              <ListItem button key={label} component={Link} to={to} onClick={handleDrawerToggle}>
+                {icon}
+                <ListItemText primary={label} />
+              </ListItem>
+            ))
+          ) : (
+            <>
+              <ListItem button component={Link} to="/signin" onClick={handleDrawerToggle}>
+                <LogIn size={24} />
+                <ListItemText primary="Sign In" />
+              </ListItem>
+              <ListItem button component={Link} to="/signup" onClick={handleDrawerToggle}>
+                <UserPlus size={24} />
+                <ListItemText primary="Sign Up" />
+              </ListItem>
+            </>
+          )}
         </List>
       </Drawer>
     </AppBar>

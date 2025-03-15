@@ -135,8 +135,8 @@ exports.signin = async (req, res) => {
     // Set HTTP-Only Cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,  // Use secure: true in production (HTTPS)
-      sameSite: 'None',  // Cross-Origin Request allowed
+      secure: false,  
+      sameSite: 'None', 
       maxAge: 2 * 60 * 60 * 1000
     });
 
@@ -154,4 +154,34 @@ exports.signin = async (req, res) => {
     console.error(err.message);
     res.status(500).json({ error: "Server error." });
   }
+};
+
+
+// User details
+exports.getUser = async (req, res) => {
+  try {
+    // Extract user ID from request (added by authMiddleware)
+    const user = await User.findById(req.user.id).select("-password"); // Exclude password field
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ 
+      id: user._id,
+      name: user.name,
+      email: user.email
+    });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
+
+// Logout
+exports.logout=async (req, res) => {
+  res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
+  res.status(200).json({ message: "Logout successful" });
 };

@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useGetUserQuery } from "./App/Services/AuthenticationApi";
 
-function ProtectedRoute() {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+const ProtectedRoute = ({ element }) => {
+  const { data, isLoading } = useGetUserQuery();
 
-export default ProtectedRoute
+  if (isLoading) return <div>Loading...</div>; // Show loading while checking authentication
+
+  return data?.user ? element : <Navigate to="/signin" replace />;
+};
+
+export default ProtectedRoute;

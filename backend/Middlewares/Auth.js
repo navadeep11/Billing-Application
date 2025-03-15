@@ -1,30 +1,36 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const User = require('../Models/AuthModel'); 
+const User = require('../Models/AuthModel');
 
 exports.IsUser = async (req, res, next) => {
   try {
-    // Get the token from the Authorization header
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(410).json({ message: 'Authentication token is missing.' });
+    // Check if cookies exist and extract token
+    if (!req.cookies || !req.cookies.token) {
+      return res.status(401).json({ message: 'Your session has expired!' });
     }
+
+    const { token } = req.cookies;
 
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  
-    // Find the user by ID if additional validation is needed
+
+    // Find the user by ID
     const user = await User.findById(decoded.id);
     if (!user) {
-      return res.status(410).json({ message: 'Invalid token or user not found.' });
+      return res.status(401).json({ message: 'Invalid token or user not found.' });
     }
+
     // Attach user information to the request object
-    req.user= user;
+    req.user = user;
     next();
   } catch (error) {
-    res.status(410).json({ message: 'Unauthorized access. Token verification failed.', error: error.message });
+    // Handle different JWT errors
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token has expired. Please log in again.' });
+    } else if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token. Unauthorized access.' });
+    } else {
+      return res.status(500).json({ message: 'Internal server error.', error: error.message });
+    }
   }
 };
-
-

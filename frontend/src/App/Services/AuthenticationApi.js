@@ -2,42 +2,52 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const AuthApi = createApi({
   reducerPath: 'Auth',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://billing-application-3vl7.onrender.com/' }),
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: 'https://billing-application-3vl7.onrender.com/',
+    credentials: 'include', 
+  }),
   endpoints: (build) => ({
     signUp: build.mutation({
       query: (body) => ({
-        url: `signup`,
+        url: 'signup',
         method: 'POST',
         body,
-        mode: "cors", 
       }),
     }),
     otpVerify: build.mutation({
       query: (body) => ({
-        url: `verify-otp`,
+        url: 'verify-otp',
         method: 'POST',
         body,
-        mode: "cors", 
       }),
     }),
     signIn: build.mutation({
       query: (body) => ({
-        url: `signin`,
+        url: 'signin',
         method: 'POST',
         body,
-        mode: "cors",
       }),
     }),
-    
+    getUser: build.query({
+      query: () => ({
+        url: 'me',
+        method: 'GET',
+      }),
+    }),
+    logout: build.mutation({
+      query: () => ({
+        url: 'logout',
+        method: 'POST',
+      }),
+    }),
   }),
 });
-
-
-
 
 // Auto-generated hooks
 export const {
   useSignUpMutation,
   useOtpVerifyMutation,
   useSignInMutation,
+  useGetUserQuery,
+  useLogoutMutation,
 } = AuthApi;
