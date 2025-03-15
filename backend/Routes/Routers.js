@@ -10,5 +10,5 @@ Router.post('/signup', signup);
 Router.post("/verifyOTP", verifyOTP);
 Router.post("/signin", signin);
 Router.post("/logout", logout);
-Router.get("/me",IsUser,getUser);
+Router.get("/me", IsUser, getUser);
 module.exports = Router;

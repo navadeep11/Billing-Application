@@ -10,6 +10,7 @@ exports.IsUser = async (req, res, next) => {
     }
 
     const { token } = req.cookies;
+    console.log(token);
 
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

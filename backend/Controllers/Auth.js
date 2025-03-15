@@ -148,8 +148,11 @@ exports.signin = async (req, res) => {
         email: user.email,
         name: user.name,
       }, 
+
+   
       
     });
+    
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Server error." });
@@ -172,6 +175,7 @@ exports.getUser = async (req, res) => {
       name: user.name,
       email: user.email
     });
+    console.log(user)
 
   } catch (err) {
     console.error(err.message);
