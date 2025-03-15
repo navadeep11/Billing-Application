@@ -1,13 +1,16 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useGetUserQuery } from "./App/Services/AuthenticationApi";
+import { Navigate, Outlet } from "react-router-dom";
+import { useNavbarLogic } from "./Components/Navbar/NavbarLogic"; // Import our custom hook
 
-const ProtectedRoute = ({ element }) => {
-  const { data, isLoading } = useGetUserQuery();
+const ProtectedRoute = () => {
+  const { user, isLoading } = useNavbarLogic(); // Use from navbar logic
 
-  if (isLoading) return <div>Loading...</div>; // Show loading while checking authentication
+  if (isLoading) return <p>Loading...</p>;
 
-  return data?.user ? element : <Navigate to="/signin" replace />;
+  if (!user) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
