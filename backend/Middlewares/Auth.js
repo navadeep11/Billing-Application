@@ -5,15 +5,14 @@ const User = require('../Models/AuthModel');
 exports.IsUser = async (req, res, next) => {
   try {
     // Check if cookies exist and extract token
-    console.log(req.headers)
+    
     if (!req.cookies || !req.cookies.token) {
       console.log('No cookies')
       return res.status(401).json({ message: 'Your session has expired!' });
     }
 
     const { token } = req.cookies;
-    console.log(token);
-
+    
     // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

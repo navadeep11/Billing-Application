@@ -143,14 +143,7 @@ exports.signin = async (req, res) => {
     // Send response with the user data and token
     res.status(200).json({ 
       message: "Sign in successful", 
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-      }, 
-
-   
-      
+ 
     });
     
   } catch (err) {

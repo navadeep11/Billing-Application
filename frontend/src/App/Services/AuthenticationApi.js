@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const AuthApi = createApi({
   reducerPath: 'Auth',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:4000/',
+    baseUrl: 'https://billing-application-3vl7.onrender.com/',
     credentials: 'include', 
   }),
   endpoints: (build) => ({
@@ -38,7 +38,6 @@ export const AuthApi = createApi({
       query: () => ({
         url: 'logout',
         method: 'POST',
-        credentials: "include", 
       }),
     }),
   }),
