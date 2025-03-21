@@ -14,11 +14,10 @@ import {
 } from "@mui/material";
 import { Home, PlusSquare, BarChart, ShoppingCart, LogOut, LogIn, UserPlus, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useNavbarLogic } from "./NavbarLogic"; 
 import "./Navbar.css";
 
-const Navbar = () => {
-  const { isAuthenticated, handleLogout } = useNavbarLogic(); // Check if user is authenticated
+const Navbar = ({ isAuthenticated, handleLogout }) => {
+  
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 

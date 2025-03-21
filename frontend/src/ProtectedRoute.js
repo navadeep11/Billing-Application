@@ -1,16 +1,11 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useNavbarLogic } from "./Components/Navbar/NavbarLogic"; // Import our custom hook
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = () => {
-  const { user, isLoading } = useNavbarLogic(); // Use from navbar logic
-
-  if (isLoading) return <p>Loading...</p>;
-
-  if (!user) {
+const ProtectedRoute = ({ isAuthenticated, element }) => {
+  if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
   }
-
-  return <Outlet />;
+  return element;
 };
 
 export default ProtectedRoute;
