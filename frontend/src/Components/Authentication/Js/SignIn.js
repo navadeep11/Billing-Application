@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import {
   TextField,
@@ -10,12 +11,17 @@ import {
 } from "@mui/material";
 import { AccountCircle, Email, Lock, Login } from "@mui/icons-material"; 
 import { ValidationSchema } from "../Logics/SignInLogic.js";
-import "../Css/SignIn.css"
+import "../Css/SignIn.css";
 import { useSignInMutation } from "../../../App/Services/AuthenticationApi.js";
+import { AuthContext } from "../../../App.js";
 
 const SignIn = () => {
-  const [signIn, { isLoading, error }] = useSignInMutation(); // Mutation hook
+  const navigate = useNavigate();
+  const [signIn, { isLoading}] = useSignInMutation();
+  const { setIsAuthenticated, refetch } = useContext(AuthContext);
+
   
+
   return (
     <div className="signin-wrapper">
       <Card className="signin-card">
@@ -35,17 +41,23 @@ const SignIn = () => {
             validationSchema={ValidationSchema}
             onSubmit={async (values, { resetForm }) => {
               try {
-                const response = await signIn(values).unwrap();
-                console.log("Login Successful:", response);
-                alert("Sign In Successful!");
+                await signIn(values).unwrap();
+
+                alert("Sign In Success")
+                // Fetch user data after successful login
+
+                const userResponse = await refetch(); 
+                if (userResponse.data) {
+                  setIsAuthenticated(true);
+                  navigate("/");
+                }
+
                 resetForm();
-            
               } catch (err) {
                 console.error("Login Failed:", err);
-                alert("Login Failed. Please check your credentials.");
+                alert(err.data.error);
               }
             }}
-            
           >
             {({ errors, touched, handleChange }) => (
               <Form>
@@ -92,16 +104,12 @@ const SignIn = () => {
                     color="primary"
                     fullWidth
                     startIcon={<Login />}
-                    disabled={isLoading} // Disable while loading
+                    disabled={isLoading}
                   >
                     {isLoading ? "Signing In..." : "Sign In"}
                   </Button>
                 </div>
-                {error && (
-                  <Typography color="error" align="center">
-                    {error?.data?.message || "Login failed. Try again!"}
-                  </Typography>
-                )}
+               
               </Form>
             )}
           </Formik>

@@ -24,9 +24,9 @@ const SignUp = () => {
       const response = await signUp(values).unwrap();
       console.log("Response", response);
 
-      if (response.success) {
-        alert("Sign Up Successful!");
-        navigate(`/otp:${values.email}`);
+      if (response) {
+        alert(response.message);
+        navigate(`/otp/${values.email}`);
         resetForm();
       }
     } catch (error) {

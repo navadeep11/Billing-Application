@@ -1,0 +1,16 @@
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    padding: 20px; /* Adds spacing for small screens */
+  }
+  
+  @media (max-width: 600px) {
+    .container {
+      height: auto; /* Allows scrolling on small screens */
+      padding: 40px 10px;
+      align-items: flex-start; /* Aligns content at the top */
+    }
+  }
+  

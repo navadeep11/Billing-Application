@@ -16,7 +16,14 @@ export const AuthApi = createApi({
     }),
     otpVerify: build.mutation({
       query: (body) => ({
-        url: 'verify-otp',
+        url: 'verifyOTP',
+        method: 'POST',
+        body,
+      }),
+    }),
+    resendOtp: build.mutation({
+      query: (body) => ({
+        url: 'resendOtp',
         method: 'POST',
         body,
       }),
@@ -47,6 +54,7 @@ export const AuthApi = createApi({
 export const {
   useSignUpMutation,
   useOtpVerifyMutation,
+  useResendOtpMutation,
   useSignInMutation,
   useGetUserQuery,
   useLogoutMutation,

@@ -1,28 +1,47 @@
-const { authenticator } = require('otplib');
+const { toBeRequired } = require("@testing-library/jest-dom/matchers");
+const redis = require("redis");
+require("dotenv").config();
 
+// 🔹 Connect to Redis
+const client = redis.createClient({ url: process.env.REDIS_URL });
 
-authenticator.options = {
-    step: 300, // OTP expires in 300 seconds (5 minutes)
-    digits: 4, // 6-digit OTP
-    algorithm: "sha256", // Secure hashing algorithm
+client.connect()
+  .then(() => console.log("Connected to Redis"))
+  .catch(err => console.error("Redis Connection Error:", err));
+
+// Function to generate a 4-digit OTP
+const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
+
+//  Send OTP and store in Redis
+const sendOTP = async (email) => {
+  try {
+    const otp = generateOTP();
+
+    // Store OTP in Redis with expiration (5 minutes)
+    await client.setEx(`otp:${email}`, 300, otp);
+    return  otp ;
+  } catch (error) {
+    console.log(error)
+    return null;
+  }
 };
 
-// Set up a secret key (store this securely)
-const secret = authenticator.generateSecret();
+// Verify OTP
+const verifyOTP = async (email, otp) => {
+  try {
+    const storedOtp = await client.get(`otp:${email}`);
 
+    if (!storedOtp) return { success: false, message: "OTP expired or not found" };
+    if (storedOtp !== otp) return { success: false, message: "Invalid OTP" };
 
-// Generate a Time-Based OTP (TOTP)
-const sendOTP=()=>{
-    const otp = authenticator.generate(secret);
-    return otp;
-}
+    // OTP is valid; delete it after successful verification
+    await client.del(`otp:${email}`);
 
-
-
-// Verify the OTP
-const verifyOTP=(otp)=>{
-    const isValid = authenticator.check(otp, secret);
-    return isValid;
-}
+    return true
+  } catch (error) {
+    
+    return false
+  }
+};
 
 module.exports = { sendOTP, verifyOTP };

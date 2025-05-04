@@ -1,0 +1,153 @@
+.cart-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 15px;
+}
+
+.cart-title {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.cart-items-scroll {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 5px;
+  padding-bottom: 35px; 
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+  gap: 15px;
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.cart-item-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.item-price {
+  color: #555;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.button-group-mobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Quantity Buttons */
+.quantity-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-buttons button {
+  min-width: 30px;
+  padding: 5px;
+}
+
+/* Remove Button */
+.remove-button {
+  padding: 6px 12px;
+  min-width: 110px;
+}
+
+/* Fixed Bottom Bar */
+.cart-bottom-bar {
+  position: fixed;
+  bottom: 20px; /* slight spacing from bottom */
+  right: 20px;
+  width: auto;
+  background: white;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 12px;
+  z-index: 10;
+  gap: 20px;
+}
+
+/* Checkout Button */
+.checkout-button {
+  padding: 10px 20px;
+}
+
+/* Responsive - Mobile View */
+@media (max-width: 600px) {
+  .cart-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    
+  }
+
+  .cart-item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .button-group-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+   
+    
+  }
+
+  .remove-button {
+    width: auto;
+    font-size: 12px;
+  }
+
+
+  .cart-bottom-bar {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 90%;
+    max-width: 100%;
+    border-radius: 0;
+    justify-content: space-between;
+    padding: 12px 15px;
+  }
+
+  .checkout-button {
+    flex: 1;
+    text-align: center;
+  }
+}

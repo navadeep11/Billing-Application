@@ -15,9 +15,10 @@ import TimerIcon from "@mui/icons-material/Timer";
 import useOtpLogic from "../Logics/OtpLogic.js";
 
 const Otp = () => {
+  
+
   const {
     otp,
-    //email,
     isResendDisabled,
     timer,
     errorMessage,
@@ -25,6 +26,7 @@ const Otp = () => {
     handleChange,
     handleResendOtp,
     handleVerifyOtp,
+    email
   } = useOtpLogic();
 
   return (
@@ -39,8 +41,8 @@ const Otp = () => {
         </Typography>
 
         <Typography variant="body2" className="subtitle">
-          A One-Time Password (OTP) has been sent to your {}. Please enter
-          the OTP to verify your account.
+          A One-Time Password (OTP) has been sent to <strong>{email}</strong>. 
+          Please enter the OTP to verify your account.
         </Typography>
 
         <Typography variant="caption" className="timer-text">
@@ -50,7 +52,6 @@ const Otp = () => {
 
         {errorMessage && <Alert severity="error" className="alert-message">{errorMessage}</Alert>}
         {successMessage && <Alert severity="success" className="alert-message">{successMessage}</Alert>}
-
 
         <OtpInput
           value={otp}

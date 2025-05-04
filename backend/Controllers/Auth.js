@@ -19,12 +19,14 @@ const TOKEN_EXPIRATION = process.env.TOKEN_EXPIRATION;
 // Sign UP
 exports.signup = async (req, res) => {
     let { name, email, password } = req.body;
+    
   
     try {
       // Check if user already exists
       let user = await User.findOne({ email });
+      const otp = await sendOTP(email);
       const subject = "Verify your Email";
-      const message = `Your email verification code is ${sendOTP()}`;
+      const message = `Your email verification code is ${otp}`;
   
       if (user) {
         if (!user.isVerified) {
@@ -74,7 +76,7 @@ exports.signup = async (req, res) => {
 
 // OTP verification
 
-  exports.verifyOTP = async (req, res) => {
+exports.verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
 
     try {
@@ -82,7 +84,7 @@ exports.signup = async (req, res) => {
         if (!user) return res.status(400).json({ message: 'User not found' });
      
         // Check if OTP is valid and not expired
-        if (!verifyOTP(otp)) {   
+        if (!verifyOTP(email,otp)) {   
             return res.status(400).json({ message: 'Invalid or expired OTP' });
         }
 
@@ -98,6 +100,25 @@ exports.signup = async (req, res) => {
     }
 };
 
+//Resend OTP
+
+exports.resendOTP = async (req, res) => {
+
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: 'User not found' });
+        const otp = await sendOTP(email);
+        const subject = "Verify your Email";
+        const message = `Your email verification code is ${otp}`;
+        // Send OTP to email
+        sendMail(user.email, subject, message);
+        res.status(200).json({ message: 'New OTP sent to your email.' });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ message: "Server error" });
+    }
+}
 
 // Sign In 
 exports.signin = async (req, res) => {
@@ -136,7 +157,7 @@ exports.signin = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,  
-      sameSite:'none',
+      sameSite:'Lax',
       maxAge: 2 * 60 * 60 * 1000
     });
 
@@ -168,7 +189,7 @@ exports.getUser = async (req, res) => {
       name: user.name,
       email: user.email
     });
-    console.log(user)
+    
 
   } catch (err) {
     console.error(err.message);

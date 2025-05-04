@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useOtpVerifyMutation, useResendOtpMutation } from "../../../App/Services/AuthenticationApi";
 
 const OtpLogic = () => {
   const [otp, setOtp] = useState("");
   const { email } = useParams();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [timer, setTimer] = useState(60);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  //const navigate = useNavigate();
 
-  // Handle OTP input change
-  const handleChange = (otpValue) => setOtp(otpValue);
+  // Mutations
+  const [otpVerify, { isLoading }] = useOtpVerifyMutation();
+  const [resendOtp, { isLoading: isResending }] = useResendOtpMutation();
 
   // Timer countdown
   useEffect(() => {
@@ -24,21 +25,43 @@ const OtpLogic = () => {
     }
   }, [isResendDisabled, timer]);
 
+  // Handle OTP input change
+  const handleChange = (otpValue) => {
+    setOtp(otpValue);
+  };
+
   // Resend OTP
-  const handleResendOtp = () => {
-    setIsResendDisabled(true);
-    setTimer(60);
-    setErrorMessage("");
-    setSuccessMessage("A new OTP has been sent to your email.");
+  const handleResendOtp = async () => {
+    try {
+      await resendOtp({ email }).unwrap();
+      setIsResendDisabled(true);
+      setTimer(60);
+      setErrorMessage("");
+      setSuccessMessage("A new OTP has been sent to your email.");
+    } catch (error) {
+      setErrorMessage(error.data?.message || "Failed to resend OTP. Try again.");
+    }
   };
 
   // Verify OTP
-  const handleVerifyOtp = () => {
-    if (otp === "1234") {
-      setSuccessMessage("OTP Verified Successfully!");
-      setTimeout(() => navigate("/signIn"), 2000);
-    } else {
-      setErrorMessage("Invalid OTP. Please try again.");
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 4) {
+      setErrorMessage("Please enter a valid 4-digit OTP.");
+      return;
+    }
+
+    try {
+      await otpVerify({ email, otp }).unwrap();
+      setSuccessMessage("OTP verified successfully!");
+      setErrorMessage("");
+
+      // Redirect to sign-in page after 2 seconds
+      setTimeout(() => {
+        navigate("/signin");
+      }, 2000);
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(error.data?.message || "Invalid OTP. Please try again.");
     }
   };
 
@@ -52,6 +75,8 @@ const OtpLogic = () => {
     handleChange,
     handleResendOtp,
     handleVerifyOtp,
+    isLoading,
+    isResending,
   };
 };
 
